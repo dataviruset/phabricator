@@ -92,6 +92,11 @@ final class PhabricatorLDAPAuthProvider extends PhabricatorAuthProvider {
     }
 
     $v_user = $request->getStr('ldap_username');
+    $v_pass = null;
+    if (empty($v_user) && isset($_SERVER['HTTP_WEBAUTH_USERNAME'])) {
+      $v_user = $_SERVER['HTTP_WEBAUTH_USERNAME'];  
+      $v_pass = 'whatever';  
+    }
 
     $e_user = null;
     $e_pass = null;
@@ -118,6 +123,7 @@ final class PhabricatorLDAPAuthProvider extends PhabricatorAuthProvider {
         id(new AphrontFormPasswordControl())
           ->setLabel(pht('LDAP Password'))
           ->setName('ldap_password')
+          ->setValue($v_pass)
           ->setError($e_pass));
 
     if ($errors) {
